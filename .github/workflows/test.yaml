@@ -1,0 +1,54 @@
+name: benchmark e2e tests - [${{ inputs.query_set }}] ${{ endsWith(inputs.spicepod_path, '/') && inputs.spicepod_path || inputs.spicepod_path | split('/') | last }} (${{ inputs.query_overrides != '' && inputs.query_overrides || '' }})
+
+on:
+  workflow_dispatch:
+    inputs:
+      spiced_commit:
+        description: 'spiced build commit'
+        required: false
+        type: string
+      spicepod_path:
+        description: 'The spicepod file to test with'
+        required: true
+        type: string
+      query_set:
+        description: 'Query set'
+        required: true
+        default: 'tpch'
+        type: choice
+        options:
+          - 'tpch'
+          - 'tpcds'
+          - 'clickbench'
+      query_overrides:
+        description: 'Query overrides'
+        required: false
+        type: choice
+        default: ''
+        options:
+          - ''
+          - 'sqlite'
+          - 'postgresql'
+          - 'mysql'
+          - 'dremio'
+          - 'odbc-athena'
+          - 'odbc-databricks'
+          - 'duckdb'
+          - 'duckdb-zero-results'
+          - 'snowflake'
+          - 'spark'
+          - 'iceberg-sf1'
+          - 'spicecloud-catalog'
+          - 'spicecloud'
+      scale_factor:
+        description: 'Scale factor for the benchmark'
+        required: false
+        type: string
+        default: '1'
+
+jobs:
+  test:
+    name: Run benchmark e2e tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
